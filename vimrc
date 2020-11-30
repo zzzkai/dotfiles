@@ -17,6 +17,9 @@ set showmatch " show matching braces when text indicator is over them
 "    autocmd WinLeave * setlocal nocursorline
 "augroup END
 
+" set line status
+set statusline+=%F\ %l\:%c
+
 "---------------------
 " Basic editing config
 "---------------------
