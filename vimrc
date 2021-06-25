@@ -8,7 +8,9 @@ set shortmess+=I
 " Syntax and indent
 "------------------
 syntax on " turn on syntax highlighting
+"colorscheme gruvbox
 set showmatch " show matching braces when text indicator is over them
+syntax enable
 
 "" highlight current line, but only in active window
 "augroup CursorLineOnlyInActiveWindow
@@ -16,13 +18,17 @@ set showmatch " show matching braces when text indicator is over them
 "    autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
 "    autocmd WinLeave * setlocal nocursorline
 "augroup END
-
 " set line status
 set statusline+=%F\ %l\:%c
 
 "---------------------
 " Basic editing config
 "---------------------
+" Disable audible bell because it's annoying.
+set noerrorbells visualbell t_vb=
+
+" Enable mouse support.
+set mouse+=a
 
 " Show line numbers.
 set number
@@ -66,83 +72,16 @@ set noerrorbells visualbell t_vb=
 " Set auto indentation
 set autoindent
 
-" movement relative to display lines
-nnoremap <silent> <Leader>d :call ToggleMovementByDisplayLines()<CR>
-function SetMovementByDisplayLines()
-    noremap <buffer> <silent> <expr> k v:count ? 'k' : 'gk'
-    noremap <buffer> <silent> <expr> j v:count ? 'j' : 'gj'
-    noremap <buffer> <silent> 0 g0
-    noremap <buffer> <silent> $ g$
-endfunction
-function ToggleMovementByDisplayLines()
-    if !exists('b:movement_by_display_lines')
-        let b:movement_by_display_lines = 0
-    endif
-    if b:movement_by_display_lines
-        let b:movement_by_display_lines = 0
-        silent! nunmap <buffer> k
-        silent! nunmap <buffer> j
-        silent! nunmap <buffer> 0
-        silent! nunmap <buffer> $
-    else
-        let b:movement_by_display_lines = 1
-        call SetMovementByDisplayLines()
-    endif
-endfunction
-
 " toggle relative numbering
 nnoremap <C-n> :set rnu!<CR>
 
-
-"-------------------------
-" File header
-"-------------------------
-"for .c,.h,.sh,.java
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.rb,*.java,*.py exec ":call SetTitle()" 
- 
-func SetTitle() 
-	".sh file 
-	if &filetype == 'sh' 
-		call setline(1,"\#!/bin/bash") 
-		call append(line("."), "") 
-    elseif &filetype == 'python'
-        call setline(1,"#!/usr/bin/env python")
-        call append(line("."),"# coding=utf-8")
-	    call append(line(".")+1, "") 
-
-    elseif &filetype == 'ruby'
-        call setline(1,"#!/usr/bin/env ruby")
-        call append(line("."),"# encoding: utf-8")
-	    call append(line(".")+1, "")
-
-"    elseif &filetype == 'mkd'
-"        call setline(1,"<head><meta charset=\"UTF-8\"></head>")
-	else 
-		call setline(1, "/*************************************************************************") 
-		call append(line("."), "	> File Name: ".expand("%")) 
-		call append(line(".")+1, "	> Author: Kai")
-		call append(line(".")+2, "	> Created Time: ".strftime("%c")) 
-		call append(line(".")+3, " ************************************************************************/") 
-		call append(line(".")+4, "")
-	endif
-	if expand("%:e") == 'cpp'
-		call append(line(".")+5, "#include <iostream>")
-		call append(line(".")+6, "using namespace std;")
-		call append(line(".")+7, "")
-	endif
-	if &filetype == 'c'
-		call append(line(".")+5, "#include <stdio.h>")
-		call append(line(".")+6, "")
-	endif
-	if expand("%:e") == 'h'
-		call append(line(".")+5, "#ifndef _".toupper(expand("%:r"))."_H")
-		call append(line(".")+6, "#define _".toupper(expand("%:r"))."_H")
-		call append(line(".")+7, "#endif")
-	endif
-	if &filetype == 'java'
-		call append(line(".")+5,"public class ".expand("%:r"))
-		call append(line(".")+6,"")
-	endif
-endfunc
 " jump to the end
 autocmd BufNewFile * normal G
+
+set hidden
+
+" This setting makes search case-insensitive when all characters in the string
+" being searched are lowercase. However, the search becomes case-sensitive if
+" it contains any capital letters. This makes searching more convenient.
+set ignorecase
+set smartcase
