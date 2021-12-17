@@ -8,19 +8,44 @@ set shortmess+=I
 " Syntax and indent
 "------------------
 syntax on " turn on syntax highlighting
-"colorscheme gruvbox
+colorscheme PaperColor
+set background=dark
 set showmatch " show matching braces when text indicator is over them
 syntax enable
 
-"" highlight current line, but only in active window
-"augroup CursorLineOnlyInActiveWindow
-"    autocmd!
-"    autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-"    autocmd WinLeave * setlocal nocursorline
-"augroup END
-" set line status
-set statusline+=%F\ %l\:%c
+"------------------
+" Status line
+"------------------
+function! GitBranch()
+  return system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+endfunction
 
+let b:BranchName = ' '
+function! UpdateStatuslineGit()
+  let l:branchname = GitBranch()
+  let b:BranchName = strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+endfunction
+
+augroup UPDATE_BRANCH
+	autocmd!
+	autocmd BufWritePre * :call UpdateStatuslineGit()
+	autocmd BufReadPost * :call UpdateStatuslineGit()
+	autocmd BufEnter * :call UpdateStatuslineGit()
+augroup END
+
+set laststatus=2
+set statusline=
+set statusline+=%#PmenuSel#
+set statusline+=%{b:BranchName}
+set statusline+=%#LineNr#
+set statusline+=\ %f
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\[%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
 "---------------------
 " Basic editing config
 "---------------------
@@ -50,9 +75,9 @@ set scrolloff=3
 
 " use 4 spaces instead of tabs during formatting
 set noexpandtab
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 
 " The backspace key has slightly unintuitive behavior by default. For example,
 " by default, you can't backspace before the insertion point set with 'i'.
@@ -64,7 +89,7 @@ set backspace=indent,eol,start
 set incsearch
 
 " Unbind some useless/annoying default key bindings.
-nmap Q <Nop>
+nmap Q <Nop> 
 " 'Q' in normal mode enters Ex mode. You almost never want this.
 
 " Disable audible bell because it's annoying.
