@@ -37,7 +37,7 @@ set laststatus=2
 set statusline=
 set statusline+=%#PmenuSel#
 set statusline+=%{b:BranchName}
-set statusline+=%#LineNr#
+set statusline+=%#CursorLineNr#
 set statusline+=\ %f
 set statusline+=%=
 set statusline+=%#CursorColumn#
